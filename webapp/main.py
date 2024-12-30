@@ -1,3 +1,22 @@
+# Create a FastAPI endpoint that accepts a POST request with a JSON body containing a single field called "text" and returns a checksum of the text
+import base64
+import os
+import hashlib
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class TextBody(BaseModel):
+    text: str
+
+@app.post('/checksum')
+def calculate_checksum(body: TextBody):
+    if not body.text:
+        raise HTTPException(status_code=400, detail="Text field is required")
+    checksum = hashlib.md5(body.text.encode()).hexdigest()
+    return {"checksum": checksum}
+
 import os
 import base64
 from typing import Union
